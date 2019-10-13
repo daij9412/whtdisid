@@ -41,7 +41,7 @@ Materials and Measures
 
 ### Example of manipulation
 
-The following is an example of the materials that participants received in the actual threat and the high threat condition. Participants in the control condition received no information. ![](R_github_files/figure-markdown_github/unnamed-chunk-1-1.png)![](R_github_files/figure-markdown_github/unnamed-chunk-1-2.png)
+The following is an example of the materials that participants received in the actual threat and the high threat condition. Participants in the control condition received no information. ![](https://github.com/daij9412/whtdisid/blob/master/actual_image.png)![](R_github_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 ### Dependent variables and measures
 
