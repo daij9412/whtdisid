@@ -3,9 +3,8 @@ title: "WhtDisID_Github"
 author: "doris dai"
 date: "10/9/2019"
 output: 
-  html_document:
+  github_document:
     toc: true
-    toc_float: true
     toc_depth: 3
 ---
 
@@ -15,14 +14,22 @@ library(ggplot2)
 library(dplyr)
 library(multicon)
 library(pander)
+panderOptions('digits', 2)
 library(readr)
 library(knitr)
 library(lavaan)
 library(xtable)
 library(emmeans)
+library(ggpirate)
 
 
-################load data
+study1a_clean <- read_csv("/Users/Doris/Desktop/self-dehumanization&trump/R scripts/study1a_clean.csv")
+
+study1b_clean <- read_csv("/Users/Doris/Desktop/self-dehumanization&trump/R scripts/study1b_clean.csv")
+
+study2_clean <- read_csv("/Users/Doris/Desktop/self-dehumanization&trump/R scripts/study2_clean.csv")
+
+studyPLT_clean <- read_csv("/Users/Doris/Desktop/self-dehumanization&trump/R scripts/studyPLT_clean.csv")
 ```
 
 #Project Overview
@@ -32,7 +39,51 @@ To test these two hypotheses, we conducted 3 studies, with a total sample of 2,4
 
 Below you can find the results. Refer to *WhtDisId_analysis.R* for codes used, which can be used for replication along with the redacted datasets. 
 
-##Variables and Measures
+##Materials and Measures
+###Example of manipulation
+The following is an example of the materials that participants received in the actual threat and the high threat condition. Participants in the control condition received no information.
+```{r, echo=FALSE}
+#actual threat example
+manipulation_actual <- data.frame(
+  group = c("Agree", "Disagree"),
+  value = c(34, 66)
+)
+
+actual_image <- ggplot(manipulation_actual, aes(x="", y=value, fill=group)) +
+  geom_bar(width=1, stat="identity") +
+  coord_polar("y", start=0) +
+  geom_text(aes(label = paste0(round(value), "%")), position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values=c("#F6AE2D", "#999999")) +
+  labs(x = NULL, y = NULL, fill = NULL, title = "Example of Materials in the Actual Threat Condition",subtitle="Percentage of White Americans who feel that \nPresident Trump's views accurately reflect \ntheir own beliefs and concerns.")+
+  theme_classic() + theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+
+ggsave("actual_image.png",plot=actual_image,height=6, width = 6)
+
+#high threat example
+manipulation_high <- data.frame(
+  group = c("Agree", "Disagree"),
+  value = c(66, 34)
+)
+
+high_image <- ggplot(manipulation_high, aes(x="", y=value, fill=group)) +
+  geom_bar(width=1, stat="identity") +
+  coord_polar("y", start=0) +
+  geom_text(aes(label = paste0(round(value), "%")), position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values=c("#F6AE2D", "#999999")) +
+  labs(x = NULL, y = NULL, fill = NULL, title = "Example of Materials in the High Threat Condition", subtitle="Percentage of White Americans who feel that \nPresident Trump's views accurately reflect \ntheir own beliefs and concerns.")+
+  theme_classic() + theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+
+ggsave("high_image.png",plot=high_image,height=6, width = 6)
+
+```
+
+###Dependent variables and measures
 ```{r echo=FALSE}
 variables.table <- data.frame("No." = 1:6, "VariableNames" = c("Political orientation", "White disidentification", "Trump’s perceived representativeness", "Liberal group identification", "Individual Advocacy", "Policy Support"), "ShortdiscriptionofMeasurement" = c("Participants' personal political beliefs (1 = extremely conservative to 8 = extremely liberal)", "Participants' tendency to distance themselves from the White racial group (1 = Strongly disagree to 7 = Strongly agree)", "Agreement with the idea that Trump's comments represent viewpoints of the White racial group (1 = Strongly disagree to 7 = Strongly agree)", "Participants' tendency to view belonging to the liberal group as central to self-concepts (1 = Strongly disagree to 7 = Strongly agree)", "The likelihood that participants would put in personal effort to push for racial equality (1 = Strongly disagree to 7 = Strongly agree)", "Participants' support for policies designed to help racial minorities (1 = Strongly disagree to 7 = Strongly agree)"))
 
@@ -41,12 +92,11 @@ pander(variables.table, style = "rmarkdown",justify = c('left', 'left', 'left'),
 
 #Study 1a
 
-##condition moderates the relation between political orientation and White disidentification (MLR Model Testing)
+##Condition moderates the relation between political orientation and White disidentification
 
 ###Main moderation MLR models
+Was the association between (liberal) and White disidentification stronger in the high threat condition than that in the actual threat condition?
 ```{r Study 1a, echo=FALSE}
-#RELOAD STUDY 1A, ADD TRUMP PROTO
-
 study1a_clean$condition <- as.factor(study1a_clean$condition)
 levels(study1a_clean$condition) <- c("Control", "Actual threat", "High threat") #rename levels of condition
 
@@ -55,55 +105,72 @@ study1a_relevel <- study1a_clean %>%
   rename(condition_control = condition) %>% 
   mutate(condition_actual = factor(condition_control, levels=c("Actual threat", "Control", "High threat"))) %>%  #add a condition with actual threat condition as the reference level
   mutate(LibCon_centered = scale(LibCon, scale=F)) #mean-center political orientation so that intercept becomes meaningful
+```
 
-  
+**Control Condition as the Reference Level**
+```{r echo=FALSE}
 #regression model 1 with control as the reference
 study1a_lm_control <- lm(WhtDis_comp~LibCon_centered + condition_control + LibCon_centered*condition_control, data=study1a_relevel)
 
-kable(xtable(study1a_lm_control), caption="Control Condition as the Reference Level (Study 1a)")
+pander(study1a_lm_control, style = "rmarkdown", split.table = 200)
+```
 
+**Actual Threat Condition as the Reference Level (Study 1a)**
+```{r echo=FALSE}
 #regression model 2 with actual threat as the reference
 study1a_lm_actual <- lm(WhtDis_comp~LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study1a_relevel)
 
-kable(xtable(study1a_lm_actual), caption="Actual Threat Condition as the Reference Level (Study 1a)")
+pander(study1a_lm_actual, style = "rmarkdown", split.table = 200)
 ```
 
-Simple slopes for political orientation by condition
+**Simple slopes for political orientation by condition**
 ```{r echo=FALSE}
 #simple slope
 emtrends(study1a_lm_control, ~ condition_control, var ="LibCon_centered")
-
 ```
 
+**Findings**: Although liberal political orientation was associated with racial disidentification in all three conditions, the association between liberal political orientation and racial disidentification was the strongest when participants received information suggesting that Trump’s discriminatory comments represented the majority (vs minority or no information) of Whites. 
+
 ###Relatively liberal Whites *vs.* relatively conservative Whites
+Did relatively liberal participants and relatively conservative participants reacted differently to information suggesting Trump represents White Americans? 
+
+**Relatively liberal participants**
 ```{r echo=FALSE}
 #end-point analysis
 study1a_relevel$LibCon_above <- study1a_relevel$LibCon_centered - sd(study1a_relevel$LibCon_centered) #center 1SD above the mean, leaning liberal
 
 study1a_relevel$LibCon_below <- study1a_relevel$LibCon_centered + sd(study1a_relevel$LibCon_centered) #center 1SD below the mean, leaning conservative 
 
-#model 1
+#Relatively liberal participants
 study1a_lm_control_above <- lm(WhtDis_comp~LibCon_above + condition_control + LibCon_above*condition_control, data=study1a_relevel) #among relatively liberal participants 
-kable(xtable(study1a_lm_control_above), caption="Control Condition as the Reference Level among Relatively Liberal Participants (Study 1a)")
+
+pander(study1a_lm_control_above, style = "rmarkdown", split.table = 200)
+
+study1a_lm_actual_above <- lm(WhtDis_comp~LibCon_above + condition_actual + LibCon_above*condition_actual, data=study1a_relevel) #among relatively liberal participants
+
+pander(study1a_lm_actual_above, style = "rmarkdown", split.table = 200)
+```
+
+**Relatively conservative participants**
+```{r, echo=FALSE}
+#Relatively conservative participants
 
 study1a_lm_control_below <- lm(WhtDis_comp~LibCon_below + condition_control + LibCon_below*condition_control, data=study1a_relevel) #among relatively conservative participants
 
-kable(xtable(study1a_lm_control_below), caption="Control Condition as the Reference Level among Relatively Conservative Participants (Study 1a)")
+pander(study1a_lm_control_below, style = "rmarkdown", split.table = 200)
 
-#model 2
-study1a_lm_actual_above <- lm(WhtDis_comp~LibCon_above + condition_actual + LibCon_above*condition_actual, data=study1a_relevel) #among relatively liberal participants
-
-kable(xtable(study1a_lm_actual_above), caption="Actual Condition as the Reference Level among Relatively Liberal Participants (Study 1a)")
 
 study1a_lm_actual_below <- lm(WhtDis_comp~LibCon_below + condition_actual + LibCon_below*condition_actual, data=study1a_relevel) #among relatively conservative participants
 
-kable(xtable(study1a_lm_actual_below), caption="Actual Condition as the Reference Level among Relatively Conservative Participants (Study 1a)")
+pander(study1a_lm_actual_below, style = "rmarkdown", split.table = 200)
 ```
 
-##Plot of Political Orientaion Interacting with Condition on White Disidentification
+**Findings**: Information suggesting that Trump’s discriminatory comments represents the majority (vs. minority) of White Americans led liberal-leaning Whites to disidentify from their racial group, while conservative-leaning Whites’ racial identities were not affected by information suggesting Trump’s representativeness
+
+##Plot of political orientaion interacting with condition on White disidentification
 ```{r, echo=FALSE}
 # regression graph
-ggplot(study1a_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
+study1a.main <- ggplot(study1a_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
   theme_bw() +
   geom_smooth(method=lm, aes(col=condition_control, linetype=condition_control, fill=condition_control), alpha=0.2) +
   scale_fill_manual(values = c("#E69F00","#009E73", "#56B4E9"), labels = c("Control condition", "Actual threat\ncondition", "High threat\ncondition")) +
@@ -121,51 +188,91 @@ ggplot(study1a_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
   annotate("text", x = 7.9, y = 1, label = "extremely\nliberal", size = 3)+
   theme(text=element_text(size=12), legend.text=element_text(size=10)) +
   xlab("Political orientation") + ylab("Disidentification from the White racial group") +
-  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 1a)")
+  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 1a)", subtitle = "Note: Around each slope, 95% confidence bands are depicted. \n* denotes a statistically significant slope, p < .001. \nThe horizontal dashed lines refer to ±1SD from the mean of political belief orientation.")
+
+ggsave("study1a.main.png",plot=study1a.main,height=6, width = 8)
 ```
 
 # Study 1b
 ## Replication of Study 1a (MLR Model Testing)
-
-###Main moderation MLR testing
+###Manipulation check
+The purpose of manipulation check is to check whether the high threat condition increased the extent to which participants perceived Trump to be representative of Whites, compared to the actual threat condition 
 ```{r study 1b, echo=FALSE}
-
 study1b_relevel <- study1b_clean %>% 
   mutate(condition_actual = factor(condition, levels=c("Actual threat", "High threat"))) %>%  #add a condition with actual threat condition as the reference level
   mutate(LibCon_centered = scale(LibCon, scale=F)) #center political orientation
 
-#regression
-study1b_lm_actual <- lm(WhtDis_comp~ LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study1b_relevel)
-kable(xtable(study1b_lm_actual), caption="Actual Condition as the Reference Level (Study 1b)")
+#manipulation check 
+
+mancheck.study1a <- t.test(TrumpProto ~ condition, data = study1b_relevel) #whether condition affected participants' perceived Trump's representativeness of Whites
+
+study1b.check <- ggplot(study1b_relevel, aes(x=condition, y=TrumpProto))+
+   theme_bw() +
+  geom_pirate(aes(col=condition, fill=condition))+
+  scale_x_discrete(labels=c("Actual threat condition", "High threat condition")) +
+  scale_y_continuous(breaks=c(1,2,3,4,5,6,7),limits=c(1, 7)) + 
+  ylab("Trump's Perceived Representativeness of Whites") + xlab("Condition") +
+  labs(title = "Ratings of Trump's Perceived Representativeness of \nWhites by Condition (Study 2b)", subtitle="Note: Points represent the jittered raw data.\nBars represent central tendencies.\nBoxes represent 95% confidence interval.") +
+  annotate("text", x = 1.5, y = 6.5, label = "*", size = 6) +
+  annotate("text", x = 1.5, y = 6.2, label = "italic(p) < .001", size = 4, parse=T)
+
+ggsave("study1b.check.png",plot=study1b.check,height=6, width = 8)
 ```
 
-Simple slopes for political orientation by condition
+###Main moderation MLR testing
+Was the association between (liberal) and White disidentification stronger in the high threat condition than that in the actual threat condition?
+
+**Actual Condition as the Reference Level**
+```{r echo=FALSE}
+
+#regression
+study1b_lm_actual <- lm(WhtDis_comp~ LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study1b_relevel)
+pander(study1b_lm_actual, style = "rmarkdown", split.table = 200)
+#confint(study1b_lm_actual)
+```
+
+**Simple slopes for political orientation by condition**
 ```{r echo=FALSE}
 #simple slope
 emtrends(study1b_lm_actual, ~ condition_actual, var ="LibCon_centered")
 ```
 
-###Relatively liberal Whites *vs.* relatively conservative Whites
+**Findings**: Consistent with Study 1a, the effect of liberal political orientation on racial disidentification was stronger when participants received information suggesting that Trump’s discriminatory comments represented the majority (vs. minority) of Whites.
 
+###Relatively liberal Whites *vs.* relatively conservative Whites
+Did relatively liberal participants and relatively conservative participants reacted differently to information suggesting Trump represents White Americans? 
+
+**Relatively liberal participants**
 ```{r, echo=FALSE}
 #end-point analysis
 study1b_relevel$LibCon_above <- study1b_relevel$LibCon_centered - sd(study1b_relevel$LibCon_centered) #center 1SD above the mean, leaning liberal
 
 study1b_relevel$LibCon_below <- study1b_relevel$LibCon_centered + sd(study1b_relevel$LibCon_centered) #center 1SD below the mean, leaning conservative
 
+#Relatively liberal participants
 study1b_lm_actual_above <- lm(WhtDis_comp~ LibCon_above + condition_actual + LibCon_above*condition_actual, data=study1b_relevel) #among relatively liberal participants
 
-kable(xtable(study1b_lm_actual_above), caption="Actual Condition as the Reference Level among Relatively Liberal Participants (Study 1b)")
+pander(study1b_lm_actual_above, style = "rmarkdown", split.table = 200)
+
+#confint(study1b_lm_actual_above)
+```
+
+**Relatively conservative participants**
+```{r, echo=FALSE}
 
 study1b_lm_actual_below <- lm(WhtDis_comp~ LibCon_below + condition_actual + LibCon_below*condition_actual, data=study1b_relevel) #among relatively conservative participants
 
-kable(xtable(study1b_lm_actual_below), caption = "Actual Condition as the Reference Level among Relatively Conservative Participants (Study 1b)")
+pander(study1b_lm_actual_below, style = "rmarkdown", split.table = 200)
+
+#confint(study1b_lm_actual_below)
 ```
 
-##Plot of Political Orientaion Interacting with Condition on White Disidentification
+**Findings**: Consistent with Study 1a, compared to conservative-leaning participants, liberal-leaning participants’ racial identities were affected more strongly by the information that Trump represented the majority (vs. minority) of White Americans.
+
+###Plot of Political Orientaion Interacting with Condition on White Disidentification
 ```{r, echo=FALSE}
 # regression graph
-ggplot(study1b_clean, aes(x=LibCon, y=WhtDis_comp, group=condition)) +
+study1b.main <- ggplot(study1b_clean, aes(x=LibCon, y=WhtDis_comp, group=condition)) +
   theme_bw() +
   geom_smooth(method=lm, aes(col=condition, linetype=condition, fill=condition), alpha=0.2) +
   scale_fill_manual(values = c("#009E73", "#56B4E9"), labels = c("Actual threat\ncondition","High threat\ncondition")) +
@@ -182,17 +289,17 @@ ggplot(study1b_clean, aes(x=LibCon, y=WhtDis_comp, group=condition)) +
   annotate("text", x = 7.9, y = 1, label = "extremely\nliberal", size = 3)+
   theme(text=element_text(size=12), legend.text=element_text(size=10)) +
   xlab("Political orientation") + ylab("Disidentification from the White racial group") +
-  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 1b)")
+  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 1b)", subtitle = "Note: Around each slope, 95% confidence bands are depicted. \n* denotes a statistically significant slope, p < .001. \nThe horizontal dashed lines refer to ±1SD from the mean of political belief orientation.")
 
-ggplot(study4, aes(x=LibCon, y=WhtDis_comp, group=condition)) +
-  geom_smooth(method=lm, aes(col=condition))
+ggsave("study1b.main.png",plot=study1b.main,height=6, width = 8)
 ```
 
 ## Liberal Identification as Covariate (Alternative Explanation Testing)
 ```{r, echo=FALSE}
-study1b_lm_alternative <- lm(WhtDis_comp ~ LibId_comp + LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study1b_relevel) #covariate liberal identity
+study1b_lm_alternative <- lm(WhtDis_comp ~ LibID + LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study1b_relevel) #covariate liberal identity
 
-kable(xtable(study1b_lm_alternative), caption = "Effect of Political Orientation and Condition Above and Beyond Liberal Identification")
+pander(study1b_lm_alternative, style = "rmarkdown", split.table = 200)
+#confint(study1b_lm_alternative)
 ```
 
 ```{r multicollnearity, eval=FALSE, include=FALSE}
@@ -203,72 +310,109 @@ omcdiag(study1b_relevel[,c(1,5)], study1b_relevel$WhtDis_comp)
 imcdiag(study1b_relevel[,c(1,5)], study1b_relevel$WhtDis_comp)
 ```
 
+**Findings**: The effect of group-image threat on racial disidentification occurred above and beyond liberal group identification. However, these results should be considered with caution because political orientation and liberal identification are correlated.
+
 
 #Study 2
 ##Replication of Study 1a (MLR Model Testing)
+###Manipulation check
+The purpose of manipulation check is to check whether the high threat condition increased the extent to which participants perceived Trump to be representative of Whites, compared to the actual threat condition 
 ```{r study 2, echo=FALSE}
-
 study2_clean$condition <- as.factor(study2_clean$condition)
 study2_clean$condition <- factor(study2_clean$condition, levels = c("Control", "Actual threat","High threat"))
-
-
 
 study2_relevel <- study2_clean %>% 
   rename(condition_control = condition) %>% 
   mutate(condition_actual = factor(condition_control, levels=c("Actual threat", "Control", "High threat"))) %>%  #add a condition with actual threat condition as the reference level
   mutate(LibCon_centered = scale(LibCon, scale=F))
-  
-study2_relevel$condition_control <- as.factor(study2_relevel$condition_control)
 
+study2_contrast <- study2_relevel %>% 
+  filter(condition_actual == "Actual threat" | condition_actual == "High threat")
+
+mancheck.study2 <- t.test(TrumpProto ~ condition_actual, data = study2_contrast)
+
+study2.check <- ggplot(study2_contrast, aes(x=condition_actual, y=TrumpProto))+
+   theme_bw() +
+  geom_pirate(aes(col=condition_actual, fill=condition_actual))+
+  scale_x_discrete(labels=c("Actual threat condition", "High threat condition")) +
+  scale_y_continuous(breaks=c(1,2,3,4,5,6,7),limits=c(1, 7)) + 
+  ylab("Trump's Perceived Representativeness of Whites") + xlab("Condition") +
+  labs(title = "Ratings of Trump's Perceived Representativeness of \nWhites by Condition (Study 2)", subtitle="Note: Points represent the jittered raw data.\nBars represent central tendencies.\nBoxes represent 95% confidence interval.")+
+    annotate("text", x = 1.5, y = 6.5, label = "*", size = 6) +
+  annotate("text", x = 1.5, y = 6.2, label = "italic(p) < .001", size = 4, parse=T)
+
+ggsave("study2.check.png",plot=study2.check,height=6, width = 8)
+```
+
+###Main moderation MLR testing
+Was the association between (liberal) and White disidentification stronger in the high threat condition than that in the actual threat condition?
+
+**Control Condition as the Reference Level**
+```{r echo=FALSE}
 #replication of Study 1a
 #regression model 1 with control as the reference
 study2_lm_control <- lm(WhtDis_comp~LibCon_centered + condition_control + LibCon_centered*condition_control, data=study2_relevel)
 
-kable(xtable(study2_lm_control), caption = "Control Condition as the Reference Level (Study 2)")
+pander(study2_lm_control, style = "rmarkdown", split.table = 200)
+#confint(study2_lm_control)
+```
 
+**Actual Threat Condition as the Reference Level**
+```{r echo=FALSE}
 #regression model 2 with actual threat as the reference
 study2_lm_actual <- lm(WhtDis_comp~LibCon_centered + condition_actual + LibCon_centered*condition_actual, data=study2_relevel)
 
-kable(xtable(study2_lm_actual), caption = "Actual Threat Condition as the Reference Level (Study 2)")
+pander(study2_lm_actual, style = "rmarkdown", split.table = 200)
+#confint(study2_lm_actual)
 ```
 
-Simple slopes for political orientation by condition
+**Simple slopes for political orientation by condition**
 ```{r echo=FALSE}
 #simple slope
 emtrends(study2_lm_control, ~ condition_control, var ="LibCon_centered")
 ```
 
-###Relatively liberal Whites *vs.* relatively conservative Whites
+**Findings**: Consistent with Studies 1a and 1b, the effect of liberal political orientation on racial disidentification was stronger when participants received information suggesting that Trump’s discriminatory comments represented the majority of Whites than when receiving information suggesting that Trump’s comments only represented the minority of Whites. 
 
+###Relatively liberal Whites *vs.* relatively conservative Whites
+Did relatively liberal participants and relatively conservative participants reacted differently to information suggesting Trump represents White Americans? 
+
+**Relatively liberal participants**
 ```{r echo=FALSE}
 #end-point analysis
 study2_relevel$LibCon_above <- study2_relevel$LibCon_centered - sd(study2_relevel$LibCon_centered) #center 1SD above the mean, leaning liberal
 
 study2_relevel$LibCon_below <- study2_relevel$LibCon_centered + sd(study2_relevel$LibCon_centered) #center 1SD below the mean, leaning conservative 
 
-#model 1
+#Relatively liberal participants
 study2_lm_control_above <- lm(WhtDis_comp~LibCon_above + condition_control + LibCon_above*condition_control, data=study2_relevel) #among relatively liberal participants 
 
-kable(xtable(study2_lm_control_above), caption="Control Condition as the Reference Level among Relatively Liberal Participants (Study 2)")
+pander(study2_lm_control_above, style = "rmarkdown", split.table = 200)
+
+study2_lm_actual_above <- lm(WhtDis_comp~LibCon_above + condition_actual + LibCon_above*condition_actual, data=study2_relevel) #among relatively liberal participants
+
+pander(study2_lm_actual_above, style = "rmarkdown", split.table = 200)
+```
+
+**Relatively conservative participants**
+```{r, echo=FALSE}
+#Relatively conservative participants
 
 study2_lm_control_below <- lm(WhtDis_comp~LibCon_below + condition_control + LibCon_below*condition_control, data=study2_relevel) #among relatively conservative participants
 
-kable(xtable(study2_lm_control_below), caption="Control Condition as the Reference Level among Relatively Conservative Participants (Study 2)")
-
-#model 2
-study2_lm_actual_above <- lm(WhtDis_comp~LibCon_above + condition_actual + LibCon_above*condition_actual, data=study2_relevel) #among relatively liberal participants
-
-kable(xtable(study2_lm_actual_above), caption="Actual Condition as the Reference Level among Relatively Liberal Participants (Study 2)")
+pander(study2_lm_control_below, style = "rmarkdown", split.table = 200)
 
 study2_lm_actual_below <- lm(WhtDis_comp~LibCon_below + condition_actual + LibCon_below*condition_actual, data=study2_relevel) #among relatively conservative participants
 
-kable(xtable(study2_lm_actual_below),  caption="Actual Condition as the Reference Level among Relatively Conservative Participants")
+pander(study2_lm_actual_below, style = "rmarkdown", split.table = 200)
 ```
 
-##Plot of Political Orientaion Interacting with Condition on White Disidentification
+**Findings**: Consistent with Studies 1a and 1b, receiving information suggesting that Trump’s discriminatory comments represented the majority (vs. minority) of White Americans led liberal-leaning Whites to disidentify from their racial group, while conservative-leaning Whites’ racial identities were not affected by information suggesting Trump’s representativeness.
+
+###Plot of Political Orientaion Interacting with Condition on White Disidentification
 ```{r, echo=FALSE}
 # regression graph
-ggplot(study2_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
+study2.main <- ggplot(study2_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
   theme_bw() +
   geom_smooth(method=lm, aes(col=condition_control, linetype=condition_control, fill=condition_control), alpha=0.2) +
   scale_fill_manual(values = c("#E69F00","#009E73", "#56B4E9"), labels = c("Control condition", "Actual threat\ncondition", "High threat\ncondition")) +
@@ -280,32 +424,36 @@ ggplot(study2_relevel, aes(x=LibCon, y=WhtDis_comp, group=condition_control)) +
   geom_vline(xintercept = 2.830357, linetype = "dashed", size = .5) + 
   geom_vline(xintercept = 7.098513, linetype = "dashed", size = .5) + 
   annotate("text", x = 6.5, y = 4.8, label = "*", size = 6) +
-  annotate("text", x = 6.5, y = 3.4, label = "*", size = 6) +
-  annotate("text", x = 6.5, y = 4.1, label = "*", size = 6) +
+  annotate("text", x = 6.5, y = 3.3, label = "*", size = 6) +
+  annotate("text", x = 6.5, y = 4.2, label = "*", size = 6) +
   annotate("text", x = 1.3, y = 1, label = "extremely\nconservative", size = 3)+
   annotate("text", x = 7.9, y = 1, label = "extremely\nliberal", size = 3)+
   theme(text=element_text(size=12), legend.text=element_text(size=10)) +
   xlab("Political orientation") + ylab("Disidentification from the White racial group") +
-  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 2)")
+  labs(title = "Relationship Between Racial Disidentification and \nPolitical Orientaion by Condition (Study 2)", subtitle = "Note: Around each slope, 95% confidence bands are depicted. \n* denotes a statistically significant slope, p < .001. \nThe horizontal dashed lines refer to ±1SD from the mean of political belief orientation.")
+
+ggsave("study2.main.png",plot=study2.main,height=6, width = 8)
 ```
 
 ##Implications of Racial Disidentification for Racial Equity
-
 Note: b1a3 = Index of moderated mediation, (a1b1+b1a3 -1) and (a1b1+b1a3 1) = conditional indirect effects 
 ```{r echo=FALSE}
 #test using lavaan
 
 #compute interaction terms
-study2_contrast <- study2_relevel %>% 
-  filter(condition_actual == "Actual threat" | condition_actual == "High threat") %>% 
+study2_contrast_mod <- study2_contrast %>% 
   mutate(condition_contrast = ifelse(condition_actual == "Actual threat", -1, 1)) %>% 
   mutate(WhtDis_comp_centered = scale(WhtDis_comp, scale=F)) %>% 
   mutate(LibCon_condition = LibCon_centered * condition_contrast,
          DisId_condition = WhtDis_comp_centered * condition_contrast)
 #head(study2_contrast,5)
 #tail(study2_contrast,5)
+```
 
+**Individual advocacy for racial equity**
+```{r echo=FALSE}
 #individual support
+
 mod_IndivAct <- " #a path
 WhtDis_comp_centered ~ 1 + a1 * LibCon_centered
 WhtDis_comp_centered ~ a2 * condition_contrast
@@ -326,13 +474,15 @@ high := a1 * b1 + b1a3 * 1"
 
 set.seed(1234)
 
-sem.fit_IndivAct <- sem(mod_IndivAct, data = study2_contrast, se = "bootstrap", bootstrap = 5000, likelihood = "wishart")
+sem.fit_IndivAct <- sem(mod_IndivAct, data = study2_contrast_mod, se = "bootstrap", bootstrap = 5000, likelihood = "wishart")
 
 para_IndivAct <- parameterestimates(sem.fit_IndivAct, boot.ci.type = "bca.simple", standardized = TRUE) 
 
-kable(xtable(para_IndivAct), caption = "Moderated Mediation with DV as Individual Action") #print results
+pander(para_IndivAct, style = "rmarkdown", split.table = 200) #print results
+```
 
-
+**Support for policies designed to help racially minoritized groups**
+```{r echo=FALSE}
 #policy support
 mod_PolicySupport <- " #a path
 WhtDis_comp_centered ~ 1 + a1 * LibCon_centered
@@ -354,11 +504,11 @@ high := a1 * b1 + b1a3 * 1"
 
 set.seed(1234)
 
-sem.fit_PolicySupport <- sem(mod_PolicySupport, data = study2_contrast, se = "bootstrap", bootstrap = 5000, likelihood = "wishart")
+sem.fit_PolicySupport <- sem(mod_PolicySupport, data = study2_contrast_mod, se = "bootstrap", bootstrap = 5000, likelihood = "wishart")
 
 para_policy <- parameterestimates(sem.fit_PolicySupport, boot.ci.type = "bca.simple", standardized = TRUE) 
 
-kable(xtable(para_policy), caption="Moderated Mediation with DV as Policy Support") #print results
-
+pander(para_policy, style = "rmarkdown", split.table = 200)
 ```
 
+**Findings**: Among participants who learned that Trump’s comments represented the majority (vs. minority) of Whites, liberal political orientation had a stronger effect on racial disidentification, which further had a stronger effect on intentions to advocate for racial equality through individual advocacy and policy support.
