@@ -11,7 +11,7 @@
 
 ##load required packages
 require(tidyverse); require(ggplot2); require(dplyr); require(readr)
-require(knitr); require(emmeans); require(mctest); require(ggpirate)
+require(emmeans); require(mctest); require(ggpirate)
 
 
 ###########load data#################
