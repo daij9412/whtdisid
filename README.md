@@ -1,6 +1,6 @@
 # Racial Disidentification Among White Liberal in the Trump Era
 This repository contains the code and redacted data for our paper:
->	Dai, J. D., Eason, A. E., Brady L. M., & Fryberg, S. A. (in prep). #NotAllWhites: White Americans Disidentify from Their Racial Ingroup Under Group-Image Threat.
+>	Dai, J. D., Eason, A. E., Brady L. M., & Fryberg, S. A. (in prep). *#NotAllWhites: White Americans Disidentify from Their Racial Ingroup Under Group-Image Threat.*
 ## To cite this compendium as:
 > Dai, J. D., Eason, A. E., Brady L. M., & Fryberg, S. A. (in prep). *#NotAllWhites: White Americans Disidentify from Their Racial Ingroup Under Group-Image Threat.*
 ## Data release and access policy:
