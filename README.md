@@ -7,8 +7,10 @@ This repository contains the code and redacted data for our paper:
 Full datasets will not be released to the public due to confidentiality concern. We only share full data for **academic research purpose**. If you wish to access full data, please contact the research team directly. 
 ## What you can find in this repository?
 ### Summary and presentation of all main findings:
-> presentation: https://github.com/daij9412/whtdisid/blob/master/Results%20presentation.md
+> https://github.com/daij9412/whtdisid/blob/master/Results%20presentation.md
 ### Code for replication
-> main moderation analysis (disidentification) for Study 1-2: https://github.com/daij9412/whtdisid/blob/master/codes/main.moderation.analysis.R
-> moderated mediation (racial equity) for Study 2: https://github.com/daij9412/whtdisid/blob/master/codes/mod.mediation.study2.R
+main moderation analysis (disidentification) for Study 1-2: 
+> https://github.com/daij9412/whtdisid/blob/master/codes/main.moderation.analysis.R
+moderated mediation (racial equity) for Study 2: 
+> https://github.com/daij9412/whtdisid/blob/master/codes/mod.mediation.study2.R
 
