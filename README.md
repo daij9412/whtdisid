@@ -4,7 +4,7 @@ This repository contains the code and redacted data for our paper:
 ## To cite this compendium as:
 > Dai, J. D., Eason, A. E., Brady L. M., & Fryberg, S. A. (in prep). *#NotAllWhites: White Americans Disidentify from Their Racial Ingroup Under Group-Image Threat.*
 ## Data release and access policy:
-Full datasets will not be released to the public due to confidentiality concern. We only share full data for **academic research purpose**. If you wish to access full data, please contact the research team directly. 
+Datasets will not be released to the public due to confidentiality concern. We only share full data for **academic research purpose**. If you wish to access the redacted or full datasets, please contact the research team directly. 
 ## What you can find in this repository?
 ### Summary and presentation of all main findings:
 > https://github.com/daij9412/whtdisid/blob/master/Results%20presentation.md
