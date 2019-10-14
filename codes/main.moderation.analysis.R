@@ -2,9 +2,10 @@
 ###########################################################
 ## Below is the code used for main analyses. Code can be ##
 ## used for replication along with redacted datasets.    ##
-## Full datasets are not be released to public due to    ##
+## Note: Datasets are not be released to public due to   ##
 ## confidentiality concern. Researchers interested in the #
-## full datasets could contact the research team.        ##
+## redacted or full datasets could contact the research  ##
+## team.                                                 ##
 ###########################################################
 
 #####################
