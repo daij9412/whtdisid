@@ -115,7 +115,7 @@ Was the association between (liberal) and White disidentification stronger in th
 | **LibCon\_centered:condition\_controlActual threat** |  -0.002  |    0.061   |  -0.033 |   0.97   |
 |  **LibCon\_centered:condition\_controlHigh threat**  |   0.18   |    0.062   |   2.8   |  0.0046  |
 
-**Actual Threat Condition as the Reference Level (Study 1a)**
+**Actual Threat Condition as the Reference Level**
 
 |                                                   | Estimate | Std. Error | t value |  Pr(&gt; |
 |:-------------------------------------------------:|:--------:|:----------:|:-------:|:--------:|
