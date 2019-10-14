@@ -2,13 +2,11 @@
 ## Below is the code used for moderated mediation tests in#
 ## Study 2, with DV as intentions to support for racial  ##
 ## equity. Code can be used for replication along with   ##
-## redacted datasets. Full datasets are not be released  ## 
-## to public due to confidentiality concern. Researchers ##
-## interested in the full datasets could contact the     ## 
-## research team.                                        ##
-## Note: data for open-ended reponse is not shared due to #
+## redacted datasets. 
+## Note: Datasets are not be released to public due to   ##
 ## confidentiality concern. Researchers interested in the #
-## response could contact the research team.             ##
+## redacted or full datasets could contact the research  ##
+## team.                                                 ##
 ###########################################################
 
 #####################
@@ -38,7 +36,7 @@ study2_contrast_mod <- study2_contrast %>%
 #tail(study2_contrast,5)
 
 
-##Individual advocacy for racial equity (close-ended, open-access data available)
+##Close-ended Individual advocacy for racial equity 
 
 mod_IndivAct <- " #a path
 WhtDis_comp_centered ~ 1 + a1 * LibCon_centered
@@ -65,7 +63,7 @@ sem.fit_IndivAct <- sem(mod_IndivAct, data = study2_contrast_mod, se = "bootstra
 parameterestimates(sem.fit_IndivAct, boot.ci.type = "bca.simple", standardized = TRUE) 
 
 
-##Support for policies designed to help racially minoritized groups (open-access data available)
+##Support for policies designed to help racially minoritized groups
 
 #policy support
 mod_PolicySupport <- " #a path
@@ -92,7 +90,7 @@ sem.fit_PolicySupport <- sem(mod_PolicySupport, data = study2_contrast_mod, se =
 
 parameterestimates(sem.fit_PolicySupport, boot.ci.type = "bca.simple", standardized = TRUE) 
 
-#Open-ended Individual advocacy for racial equity (open-access data UNAVAILABLE)
+#Open-ended Individual advocacy for racial equity 
 
 mod_OpenIndiv <- " #a path
 WhtDis_comp_centered ~ 1 + a1 * LibCon_centered
@@ -125,7 +123,7 @@ parameterestimates(sem.fit_OpenIndiv, boot.ci.type = "bca.simple", standardized 
 ###    using processr     ###   
 #############################
 
-#Individual advocacy for racial equity
+#Close-ended Individual advocacy for racial equity
 
 set.seed(1234)
 mod7.Ind <- model7(iv="LibCon_centered", dv = "IndivAction", med = "WhtDis_comp_centered", mod = "condition_contrast", study2_contrast)
@@ -136,7 +134,7 @@ set.seed(1234)
 mod7.Policy <- model7(iv="LibCon_centered", dv = "PolicySupport", med = "WhtDis_comp_centered", mod = "condition_contrast", study2_contrast)
 kable(mod7.Policy)
 
-#open-ended #Individual advocacy for racial equity
+#Open-ended Individual advocacy for racial equity
 set.seed(1234)
 mod7.openInd <- model7(iv="LibCon_centered", dv = "IndivActionOpen", med = "WhtDis_comp_centered", mod = "condition_contrast", study2_openInd)
 kable(mod7.openInd)
