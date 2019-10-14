@@ -41,7 +41,7 @@ Materials and Measures
 
 ### Example of manipulation
 
-The following is an example of the materials that participants received in the actual threat and the high threat condition. Participants in the control condition received no information. ![](https://github.com/daij9412/whtdisid/blob/master/actual_image.png)![](R_github_files/figure-markdown_github/unnamed-chunk-1-2.png)
+The following is an example of the materials that participants received in the actual threat and the high threat condition. Participants in the control condition received no information. ![](https://github.com/daij9412/whtdisid/blob/master/actual_image.png)![](https://github.com/daij9412/whtdisid/blob/master/codes/images/high_image.png)
 
 ### Dependent variables and measures
 
@@ -184,9 +184,8 @@ Did relatively liberal participants and relatively conservative participants rea
 Plot of political orientaion interacting with condition on White disidentification
 ----------------------------------------------------------------------------------
 
-    ## Warning: Removed 1 rows containing non-finite values (stat_smooth).
 
-![](R_github_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](https://github.com/daij9412/whtdisid/blob/master/codes/images/study1a.main.png)
 
 Study 1b
 ========
@@ -198,9 +197,8 @@ Replication of Study 1a (MLR Model Testing)
 
 The purpose of manipulation check is to check whether the high threat condition increased the extent to which participants perceived Trump to be representative of Whites, compared to the actual threat condition
 
-    ## Warning: Removed 2 rows containing missing values (geom_col_pirate).
 
-![](R_github_files/figure-markdown_github/study%201b-1.png)
+![](https://github.com/daij9412/whtdisid/blob/master/codes/images/study1b.check.png)
 
 ### Main moderation MLR testing
 
@@ -251,7 +249,7 @@ Did relatively liberal participants and relatively conservative participants rea
 
 ### Plot of Political Orientaion Interacting with Condition on White Disidentification
 
-![](R_github_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](https://github.com/daij9412/whtdisid/blob/master/codes/images/study1b.main.png)
 
 Liberal Identification as Covariate (Alternative Explanation Testing)
 ---------------------------------------------------------------------
@@ -276,9 +274,8 @@ Replication of Study 1a (MLR Model Testing)
 
 The purpose of manipulation check is to check whether the high threat condition increased the extent to which participants perceived Trump to be representative of Whites, compared to the actual threat condition
 
-    ## Warning: Removed 2 rows containing missing values (geom_col_pirate).
 
-![](R_github_files/figure-markdown_github/study%202-1.png)
+![](https://github.com/daij9412/whtdisid/blob/master/codes/images/study2.check.png)
 
 ### Main moderation MLR testing
 
@@ -365,9 +362,8 @@ Did relatively liberal participants and relatively conservative participants rea
 
 ### Plot of Political Orientaion Interacting with Condition on White Disidentification
 
-    ## Warning: Removed 1 rows containing non-finite values (stat_smooth).
 
-![](R_github_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](https://github.com/daij9412/whtdisid/blob/master/codes/images/study2.main.png)
 
 Implications of Racial Disidentification for Racial Equity
 ----------------------------------------------------------
