@@ -10,7 +10,7 @@
 #####################
 
 ##load required packages
-require(tidyverse); require(ggplot2); require(dplyr); require(multicon);require(readr)
+require(tidyverse); require(ggplot2); require(dplyr); require(readr)
 require(knitr); require(emmeans); require(mctest); require(ggpirate)
 
 
